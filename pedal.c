@@ -21,37 +21,45 @@ uint8_t pedal(struct dsp *dsp, uint8_t adc, uint8_t x, uint8_t y) {
 #ifdef __AVR__
 ISR(ADC_vect) {
   static struct dsp dsp;
-  static uint16_t adc, i;
-  static uint8_t x, y;
-  adc += ADCH;
-  if (i & 1) {
-    OCR1A = pedal(&dsp, (uint8_t)(adc >> 1), x, y);
-    adc = 0;
-  } else if (!i) {
-    DDRB |= _BV(DDB0) | _BV(DDB4);
-    PORTB &= ~(_BV(PB0) | _BV(PB4));
-  } else if (i & 0x200) {
-    if (i == 0x200) {
-      x = 0;
-      y = 0;
-      DDRB &= ~(_BV(DDB0) | _BV(DDB4));
-    }
-    const uint8_t portb = PORTB, v = UINT8_MAX - (uint8_t)(i >> 1);
-    if (!x && bit_is_set(portb, PB0)) x = v;
-    if (!y && bit_is_set(portb, PB4)) y = v;
+  static uint16_t i;
+  static uint8_t x, y, xt, yt;
+  OCR1A = pedal(&dsp, ADCH, x, y);
+  const uint8_t t = (uint8_t)i;
+  if (bit_is_set(i, 8)) {
+    const uint8_t v = UINT8_MAX - t;
+    if (!xt && bit_is_set(PORTB, PB0)) xt = v;
+    if (!yt && bit_is_set(PORTB, PB4)) yt = v;
+  } else if (!t) {
+    DDRB |= _BV(DDB0);
+    DDRB |= _BV(DDB4);
+    PORTB &= ~_BV(PB0);
+    PORTB &= ~_BV(PB4);
+    x = xt;
+    y = yt;
+  } else if (t == 0xff) {
+    DDRB &= ~_BV(DDB0);
+    DDRB &= ~_BV(DDB4);
+    xt = 0;
+    yt = 0;
   }
-  i = (i + 1) & 0x3ff;
+  ++i;
 }
 
 int main() {
   PRR |= _BV(PRUSI);
   TCCR0A |= _BV(WGM01);
-  TCCR0B |= 3 << CS00;
-  OCR0A |= 2;
+  TCCR0B |= _BV(CS01);
+  TCCR0B |= _BV(CS00);
+  OCR0A |= 1;
   ADMUX = _BV(MUX0) | _BV(ADLAR) | _BV(REFS1);
-  ADCSRB |= 3 << ADTS0;
+  ADCSRB |= _BV(ADTS1);
+  ADCSRB |= _BV(ADTS0);
   DIDR0 |= _BV(ADC1D);
-  ADCSRA = _BV(ADEN) | _BV(ADATE) | _BV(ADIE) | (3 << ADPS0) | _BV(ADSC);
+  ADCSRA =
+      _BV(ADEN) | _BV(ADATE) | _BV(ADIE) | _BV(ADPS1) | _BV(ADPS0) | _BV(ADSC);
+  PLLCSR |= _BV(PLLE);
+  loop_until_bit_is_set(PLLCSR, PLOCK);
+  PLLCSR |= _BV(PCKE);
   DDRB |= _BV(DDB1);
   TCCR1 = _BV(PWM1A) | _BV(COM1A1) | _BV(CS10);
   sei();
