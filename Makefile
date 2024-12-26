@@ -2,20 +2,20 @@
 
 CFLAGS = -O3 -Wall -Werror -Wextra
 
-build: pedal pedal.hex
+build: mcupedal mcupedal.hex
 
-flash: pedal.hex
+flash: mcupedal.hex
 	avrdude -c usbasp -p t85 -U lfuse:w:0xE2:m -U flash:w:$<
 
 clean:
-	rm pedal pedal.hex pedal.elf
+	rm mcupedal mcupedal.hex mcupedal.elf
 
-pedal.hex: pedal.elf
+mcupedal.hex: mcupedal.elf
 	avr-objcopy -O ihex $< $@
 
-pedal.elf: pedal.c
+mcupedal.elf: mcupedal.c
 	clang-format -Werror --dry-run --style Google $<
 	avr-gcc -mmcu=attiny85 $(CFLAGS) $< -o $@
 
-pedal: pedal.c
+mcupedal: mcupedal.c
 	gcc $(CFLAGS) $< -o $@

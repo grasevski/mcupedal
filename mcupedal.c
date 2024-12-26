@@ -55,8 +55,7 @@ int main() {
   ADCSRB |= _BV(ADTS1);
   ADCSRB |= _BV(ADTS0);
   DIDR0 |= _BV(ADC1D);
-  ADCSRA =
-      _BV(ADEN) | _BV(ADATE) | _BV(ADIE) | _BV(ADPS1) | _BV(ADPS0) | _BV(ADSC);
+  ADCSRA = _BV(ADEN) | _BV(ADATE) | _BV(ADIE) | _BV(ADPS1) | _BV(ADPS0);
   PLLCSR |= _BV(PLLE);
   loop_until_bit_is_set(PLLCSR, PLOCK);
   PLLCSR |= _BV(PCKE);
