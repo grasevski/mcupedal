@@ -1305,7 +1305,7 @@
     (property "Reference" "R3" (id 0) (at 113.03 74.9299 0)
       (effects (font (size 1.27 1.27)) (justify left))
     )
-    (property "Value" "200K" (id 1) (at 113.03 77.4699 0)
+    (property "Value" "220K" (id 1) (at 113.03 77.4699 0)
       (effects (font (size 1.27 1.27)) (justify left))
     )
     (property "Footprint" "Resistor_SMD:R_1206_3216Metric" (id 2) (at 108.712 76.2 90)
@@ -2156,7 +2156,7 @@
       (reference "R2") (unit 1) (value "1M") (footprint "Resistor_SMD:R_1206_3216Metric")
     )
     (path "/0203cc9c-33f9-456b-b7e0-9878224d49b4"
-      (reference "R3") (unit 1) (value "200K") (footprint "Resistor_SMD:R_1206_3216Metric")
+      (reference "R3") (unit 1) (value "220K") (footprint "Resistor_SMD:R_1206_3216Metric")
     )
     (path "/15f70aa3-6aa7-4ce9-b7d3-7b19f353c8c4"
       (reference "R4") (unit 1) (value "100K") (footprint "Resistor_SMD:R_1206_3216Metric")
