@@ -35,7 +35,8 @@ uint8_t pedal(struct dsp *dsp, uint8_t adc, uint8_t x, uint8_t y) {
   (void)dsp;
   (void)x;
   (void)y;
-  return TUBE[adc];
+  int16_t s = ((int16_t)adc - 128) << 4;
+  return (s > 127 ? 127 : (s < -128 ? -128 : s)) + 128;
 }
 
 #ifdef __AVR__
